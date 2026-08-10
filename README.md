@@ -27,7 +27,7 @@
 
 **1. Clone the repository**
 ```bash
-git clone <your-repo-url>.git
+git clone https://github.com/wsmr/Script-Bash-FILES_dir-explorer.git
 cd dir-explorer
 ```
 
