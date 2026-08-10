@@ -36,13 +36,13 @@ cd dir-explorer
 chmod +x dir-explorer.sh
 ```
 
-**3. Run it directly, or drop it on your `PATH`**
+**3. Run it directly, or make it callable from anywhere**
 ```bash
 ./dir-explorer.sh --help
-
-# optional: make it available everywhere
-cp dir-explorer.sh /usr/local/bin/dir-explorer
 ```
+See [Running it from any folder](#-running-it-from-any-folder) below for
+`PATH`/alias setup so you don't have to `cd` into this folder or type the
+full path every time.
 
 ---
 
@@ -55,6 +55,76 @@ dir-explorer.sh [OPTIONS] [PATH...]
 If no `PATH` is given, the **current directory** is used. Run it as
 `./dir-explorer.sh` or `bash dir-explorer.sh` — see [Compatibility](#-compatibility)
 for why `zsh dir-explorer.sh` isn't supported.
+
+---
+
+## 🌍 Running it from any folder
+
+The script's own location and the folder it scans are completely
+independent. You do **not** need to `cd` into wherever `dir-explorer.sh`
+lives, and you do **not** need a copy of it in every project — one copy,
+anywhere on disk, can scan anything, from anywhere.
+
+```bash
+cd ~/Documents
+/Users/you/DEVELOPMENTS/dir-explorer.sh          # scans ~/Documents, current dir by default
+/Users/you/DEVELOPMENTS/dir-explorer.sh ~/Downloads  # scans a different folder, still from here
+```
+
+### A common mistake: don't mix `./` with an absolute path
+
+`./` means *"relative to the folder I'm in right now"* — it's only for
+relative paths. If the path already starts with `/`, it's **absolute** and
+`./` doesn't belong in front of it:
+
+```bash
+# ❌ Wrong — zsh looks for ./Users/... under the CURRENT folder, not root
+./Users/you/DEVELOPMENTS/dir-explorer.sh
+# zsh: no such file or directory: ./Users/you/DEVELOPMENTS/dir-explorer.sh
+
+# ✅ Right — absolute path, no ./ needed
+/Users/you/DEVELOPMENTS/dir-explorer.sh
+```
+
+`./` is only correct when the script is *inside your current folder*:
+```bash
+cd ~/DEVELOPMENTS
+./dir-explorer.sh        # relative — correct, because you're already there
+```
+
+### Skip typing the full path every time
+
+Pick one of these (add to `~/.zshrc`, then `source ~/.zshrc` or open a new
+terminal tab):
+
+**Option A — add the script's folder to your `PATH`:**
+```bash
+echo 'export PATH="$HOME/DEVELOPMENTS:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+
+# now callable by filename, from any folder:
+dir-explorer.sh
+dir-explorer.sh -e node_modules --empty ~/Projects/myapp
+```
+
+**Option B — a short alias:**
+```bash
+echo 'alias dex="/Users/you/DEVELOPMENTS/dir-explorer.sh"' >> ~/.zshrc
+source ~/.zshrc
+
+# now callable as a short command, from any folder:
+dex
+dex -t d ~/Documents/design-assets
+```
+
+**Option C — a symlink on your existing `PATH`** (if `/usr/local/bin` is
+already on it, which it usually is on macOS):
+```bash
+ln -s /Users/you/DEVELOPMENTS/dir-explorer.sh /usr/local/bin/dir-explorer
+dir-explorer --help
+```
+
+Any of the three work equally well — pick whichever name you'd rather type.
 
 ---
 
